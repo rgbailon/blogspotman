@@ -14,6 +14,7 @@ import {
 import { useApp } from "../store";
 import { formatDateTime, initials, readingTime, replyCount, timeAgo, wordCount } from "../lib/utils";
 import { Button, Card, LabelChip, Spinner, StatusPill } from "./ui";
+import HtmlFrame from "./HtmlFrame";
 
 export default function PostDetail() {
   const selectedPostId = useApp((s) => s.selectedPostId);
@@ -100,7 +101,7 @@ export default function PostDetail() {
 
             <div className="max-w-[720px] px-6 py-7 sm:px-8">
               {post.content ? (
-                <div className="post-content" dangerouslySetInnerHTML={{ __html: post.content }} />
+                <HtmlFrame html={post.content} />
               ) : (
                 <p className="text-[13px] text-ink-500 italic">
                   The body wasn't loaded for this post — open it in the editor to fetch the full content.
@@ -141,10 +142,7 @@ export default function PostDetail() {
                         <span className="font-semibold text-ink-100">{c.author?.displayName ?? "Anonymous"}</span>
                         <span className="ml-2 font-mono text-[10px] text-ink-500">{timeAgo(c.published)}</span>
                       </p>
-                      <div
-                        className="post-content mt-1 !text-[12.5px] [&_p]:mb-1"
-                        dangerouslySetInnerHTML={{ __html: c.content }}
-                      />
+                      <HtmlFrame html={c.content} fontSize={12.5} minHeight={20} className="mt-1" />
                     </div>
                   </li>
                 ))}

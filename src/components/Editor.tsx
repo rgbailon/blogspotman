@@ -16,6 +16,7 @@ import { cn } from "../utils/cn";
 import { useApp } from "../store";
 import { normalizeLabels, readingTime, wordCount } from "../lib/utils";
 import { Button, IconButton, StatusPill } from "./ui";
+import HtmlFrame from "./HtmlFrame";
 
 const DEFAULT_CONTENT = `<p>Start writing…</p>\n<h2>A section heading</h2>\n<p>Everything here is plain HTML — exactly what Blogger stores and renders.</p>`;
 
@@ -34,7 +35,13 @@ export default function Editor() {
   const [labels, setLabels] = useState<string[]>(post?.labels ?? []);
   const [labelInput, setLabelInput] = useState("");
   const [mobileTab, setMobileTab] = useState<"write" | "preview">("write");
+  const [previewHtml, setPreviewHtml] = useState(content);
   const taRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    const t = setTimeout(() => setPreviewHtml(content), 200);
+    return () => clearTimeout(t);
+  }, [content]);
 
   const busyKey = isNew ? "new" : String(editingPostId);
   const busy = !!busyIds[busyKey];
@@ -265,9 +272,10 @@ export default function Editor() {
           </div>
           <div className="min-h-0 flex-1 overflow-y-auto px-5 py-4">
             <h1 className="mb-4 text-[21px] font-bold tracking-[-0.02em] text-white">{title || "Untitled"}</h1>
-            <div
-              className="post-content !text-[13.5px]"
-              dangerouslySetInnerHTML={{ __html: content || "<p class='opacity-40'>Nothing to preview yet.</p>" }}
+            <HtmlFrame
+              html={previewHtml || "<p class='opacity-40'>Nothing to preview yet.</p>"}
+              fontSize={13.5}
+              minHeight={40}
             />
           </div>
         </div>
